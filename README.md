@@ -1,32 +1,32 @@
 # KVK\_DataAccess
 
-**KVK\_DataAccess** is a Windows Forms-based desktop application that automates battery charging and discharging based on live electricity tariffs, short-term weather forecasts, and real-time sensor data received from an EWS (Energy Web Service) interface. It connects to various APIs and updates a SQL Server database to reflect current battery activity, enabling data analysis and informed decision-making.
+**KVK\_DataAccess** is a Windows Forms desktop application designed to control battery charging and discharging using real-time sensor input, electricity prices, and weather forecasts. The system integrates data from a SOAP-based EWS (Energy Web Service), Nord Pool electricity price API, and Open-Meteo weather API, updating a SQL Server database to reflect battery status and decision context.
 
-## 💡 Main Capabilities
+## 💡 Key Features
 
-* **Dynamic Electricity Pricing**: Pulls up-to-date electricity rates from the Nord Pool API and refreshes data every minute.
-* **Weather-Based Behavior Adjustment**: Integrates with the Open-Meteo API to obtain a 3-day forecast, which influences battery management decisions.
-* **Sensor Data via EWS**: Interfaces with a SOAP-based EWS service to fetch real-time ISS (instantaneous sensor) readings and battery metrics.
-* **Automated Battery Management**:
+* **Electricity Pricing Integration**: Periodically retrieves electricity prices from the Nord Pool API and uses them to determine cost-effective energy usage.
+* **Weather-Based Adjustments**: Queries Open-Meteo to get a 3-day weather forecast and adjusts battery logic depending on weather conditions.
+* **EWS Data Collection**: Communicates with a SOAP EWS service to obtain current sensor values (ISS) and battery level.
+* **Automated Decision Logic**:
 
-  * Charges when the battery level is low or when energy prices fall below a user-defined limit.
-  * Discharges during high-tariff periods or prior to a scheduled return home.
-  * Takes into account time of day (e.g., night or afternoon) and forecasted weather conditions.
-* **SQL Server Integration**: Logs current battery state and decision-making scenarios into the `BIP_Result` table used by the `Yellow_Team`.
-* **Adjustable Parameters**: Allows users to configure the buying price threshold and expected home arrival time through the interface.
+  * Charges if battery is low or price is below a defined threshold.
+  * Discharges during peak hours or prior to a configured return time.
+  * Adapts behavior based on time of day and forecasted weather.
+* **SQL Server Logging**: Updates the `BIP_Result` table with the current battery status and selected logic path for the `Yellow_Team`.
+* **User Inputs**: Parameters like `BUYING_PRICE` and `COMING_HOME_TIME` are configured through the application UI.
 
-## 🗌 Requirements
+## 📋 Prerequisites
 
-* **Operating System**: Windows 10 or newer
-* **.NET Framework**: 4.7.2 or later (or .NET Core 3.1+ if migrated)
-* **IDE**: Visual Studio 2019 or 2022 with Windows Forms workload installed
-* **Database**: SQL Server 2016 or higher available on your network
-* **Network Connectivity**:
+* **Operating System**: Windows 10 or later
+* **.NET Framework**: 4.7.2 or higher
+* **IDE**: Visual Studio 2019 or 2022 with Windows Forms workload
+* **Database**: SQL Server 2016+ with accessible connection
+* **Network Access**:
 
-  * Access to the EWS server (e.g., `172.16.16.60`)
-  * Internet access for `api.open-meteo.com` and `dashboard.elering.ee`
+  * SOAP-based EWS server (e.g., `172.16.16.60`)
+  * Internet access to `api.open-meteo.com` and `dashboard.elering.ee`
 
-## 🔧 Setup & Configuration
+## 🔧 Setup Instructions
 
 1. **Clone the Repository**
 
@@ -35,54 +35,60 @@
    cd KVK_DataAccess
    ```
 
-2. **Edit Database and Network Settings**
+2. **Update Configuration**
 
-   * In `Form1.cs`, find the `MSSQL` method and update the `connectionString` with the correct server name, database, and credentials.
-   * In the `GetPower()` method, modify the `NetworkCredential` settings if your EWS client uses authentication.
+   * In `Form1.cs`, modify the connection string inside `MSSQL()` to match your SQL Server credentials.
+   * Adjust EWS credentials in `GetPower()` if necessary.
 
-3. **UI Initialization**
+3. **Set UI Defaults**
 
-   * Launch the form designer (`Form1`) and set default values for `ComingHomeTime` and `BuyingPrice` fields to suit your preferences.
+   * Open `Form1` in the Windows Forms designer.
+   * Configure default values for `ComingHomeTime` and `BuyingPrice`.
 
-4. **Modify API URLs if Needed**
+4. **Verify API Coordinates and Endpoints**
 
-   * **Open-Meteo**: Default location is set to `55.7033, 21.1443`. You can adjust this in the `Weather()` function.
-   * **Nord Pool**: Uses the endpoint `https://dashboard.elering.ee/api/nps/price`, which requires no API key.
+   * **Weather**: Coordinates in `Weather()` default to `55.7033, 21.1443`. Update if needed.
+   * **Nord Pool**: Data is fetched from `https://dashboard.elering.ee/api/nps/price`.
 
 ## 🚀 Running the Application
 
-1. Open the solution in Visual Studio and go to **Build ▶ Build Solution**.
-2. Start the app via **Debug ▶ Start Debugging** or by pressing **F5**.
-3. The UI will show:
+1. Build the solution using **Build ▶ Build Solution**.
+2. Start the app with **Debug ▶ Start Debugging** or **F5**.
+3. The interface will show:
 
-   * **ISS** – current instantaneous sensor reading
-   * **Battery** – the battery's state-of-charge percentage
-   * **Current Price** – latest electricity rate in EUR/kWh
-   * **Battery Status** – indicates Charging, Discharging, or Idle
-4. The application refreshes its data every minute and syncs with the database accordingly.
+   * **ISS**: Instantaneous sensor value
+   * **Battery**: Battery percentage
+   * **Current Price**: Electricity rate in EUR/kWh
+   * **Battery Status**: Charging / Discharging / Inactive
+4. Timers refresh data periodically to maintain real-time state.
 
-## 📂 Directory Structure
+## 📂 Project Structure
 
 ```
 KVK_DataAccess/
-├─ Form1.cs                # Main UI and logic controller
-├─ Program.cs              # Application entry point
-├─ KVK_DataAccess.csproj   # Project file
-└─ README.md               # This documentation
+├─ EWS_PME/                # Proxy classes for EWS SOAP service
+├─ Form1.cs                # Core logic and UI
+├─ Program.cs              # Entry point
+├─ KVK_DataAccess.csproj   # Project definition
+└─ README.md               # Project documentation
 ```
 
-## 🔄 Extending the Application
+## 🔄 Customization
 
-* **Forecast Range**: In `timer2_Tick`, change the argument in `Weather(3)` to adjust the number of forecast days.
-* **Custom Battery Logic**: Add or modify rules inside `mainLoop()` to fit specific charging/discharging strategies.
-* **Database Enhancements**: Extend the `BIP_Result` schema or create new tables to store additional metrics or logs.
+* **Forecast Length**: Change the parameter in `timer2_Tick` (calls `Weather(3)`) to modify how many days of weather are retrieved.
+* **Decision Rules**: Adjust `mainLoop()` to reflect different thresholds or operational logic.
+* **Data Schema**: Expand or adapt the `BIP_Result` table to capture additional details.
 
-## 🛠️ Troubleshooting Tips
+## 🛠️ Troubleshooting
 
-* **EWS Connection Issues**: If the EWS service fails, the `GetPower()` method will trigger a message box with an error message.
-* **SQL Server Access**: Ensure the database accepts remote connections and your credentials have the necessary permissions.
-* **API Limits**: Be aware of request limits imposed by Open-Meteo and Elering; implement local caching if needed.
+* **Connection Errors**: If EWS communication fails, a message box will display the exception.
+* **Database Issues**: Verify SQL Server access permissions and remote connection settings.
+* **API Quotas**: Be cautious of request limits for Open-Meteo and Elering APIs.
 
 ## 📄 License
 
-This project is distributed under the MIT License. See [LICENSE](LICENSE) for full terms.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for more details.
+
+---
+
+Maintained by the KVK Team. Contributions and suggestions are welcome via GitHub pull requests or issues.
