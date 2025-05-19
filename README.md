@@ -60,7 +60,7 @@
    * **Battery**: Battery percentage
    * **Current Price**: Electricity rate in EUR/kWh
    * **Battery Status**: Charging / Discharging / Inactive
-  ![image](https://github.com/user-attachments/assets/c407e284-53fa-43b2-8b7c-1b83ee936013)
+  <img src="https://github.com/user-attachments/assets/c407e284-53fa-43b2-8b7c-1b83ee936013" width="400"/>
      
 4. Timers refresh data periodically to maintain real-time state.
 
