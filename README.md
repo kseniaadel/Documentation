@@ -47,7 +47,7 @@
 
 4. **Verify API Coordinates and Endpoints**
 
-   * **Weather**: Coordinates in `Weather()` default to `55.7033, 21.1443`. Update if needed.
+   * **Weather**: Coordinates in `Weather()` default to Klaipeda, Lithuania `55.7033, 21.1443`. Update if needed.
    * **Nord Pool**: Data is fetched from `https://dashboard.elering.ee/api/nps/price`.
 
 ## Running the Application
