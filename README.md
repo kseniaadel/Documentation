@@ -52,8 +52,8 @@
 
 ## Running the Application
 
-1. Build the solution using **Build ▶ Build Solution**.
-2. Start the app with **Debug ▶ Start Debugging** or **F5**.
+1. Build the solution using **Build -> Build Solution**.
+2. Start the app with **Debug -> Start Debugging** or **F5**.
 3. The interface will show:
 
    * **ISS**: Instantaneous sensor value
